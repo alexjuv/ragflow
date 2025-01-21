@@ -232,7 +232,7 @@ class ZhipuEmbed(Base):
 
 class OllamaEmbed(Base):
     def __init__(self, key, model_name, **kwargs):
-        self.client = Client(host=kwargs["base_url"])
+        self.client = Client(host=kwargs["base_url"], verify=False)
         self.model_name = model_name
 
     def encode(self, texts: list):

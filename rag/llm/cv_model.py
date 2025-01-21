@@ -368,7 +368,7 @@ class Zhipu4V(Base):
 
 class OllamaCV(Base):
     def __init__(self, key, model_name, lang="Chinese", **kwargs):
-        self.client = Client(host=kwargs["base_url"])
+        self.client = Client(host=kwargs["base_url"], verify=False)
         self.model_name = model_name
         self.lang = lang
 

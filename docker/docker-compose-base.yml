@@ -74,17 +74,18 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - TZ=${TIMEZONE}
+      - MYSQL_SSL=OFF
+      - MYSQL_SSL_MODE=DISABLED
     command:
       --max_connections=1000
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
       --default-authentication-plugin=mysql_native_password
-      --tls_version="TLSv1.2,TLSv1.3"
       --init-file /data/application/init.sql
     ports:
       - ${MYSQL_PORT}:3306
     volumes:
-      - mysql_data:/var/lib/mysql
+      - /data/ragflow/mysql:/var/lib/mysql
       - ./init.sql:/data/application/init.sql
     networks:
       - ragflow
@@ -131,14 +132,30 @@ services:
 volumes:
   esdata01:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/esdata
   infinity_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/infinity_data
   mysql_data:
     driver: local
   minio_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/minio_data
   redis_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH}/redis_data
 
 networks:
   ragflow:

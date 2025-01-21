@@ -376,7 +376,7 @@ class ZhipuChat(Base):
 
 class OllamaChat(Base):
     def __init__(self, key, model_name, **kwargs):
-        self.client = Client(host=kwargs["base_url"])
+        self.client = Client(host=kwargs["base_url"], verify=False)
         self.model_name = model_name
 
     def chat(self, system, history, gen_conf):

@@ -10,22 +10,27 @@ services:
     container_name: ragflow-server
     ports:
       - ${SVR_HTTP_PORT}:9380
-      - 80:80
-      - 443:443
+      - 11080:80
+      - 11443:443
     volumes:
-      - ./ragflow-logs:/ragflow/logs
+      - ${DATA_PATH}/ragflow-logs:/ragflow/logs
       - ./nginx/ragflow.conf:/etc/nginx/conf.d/ragflow.conf
       - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./Corp-Issuing-CA01-G2.crt:/usr/local/share/ca-certificates/Corp-Issuing-CA01-G2.crt
+      - ./ocr-dr.bg.cndc.corpintra.net.crt:/usr/local/share/ca-certificates/ocr-dr.bg.cndc.corpintra.net.crt
+      - ./Corp-Root-CA-G2.crt:/usr/local/share/ca-certificates/Corp-Root-CA-G2.crt
     env_file: .env
+    command: update-ca-certificates
     environment:
       - TZ=${TIMEZONE}
       - HF_ENDPOINT=${HF_ENDPOINT}
       - MACOS=${MACOS}
+      - REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+      - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+    
     networks:
       - ragflow
     restart: on-failure
-    # https://docs.docker.com/engine/daemon/prometheus/#create-a-prometheus-configuration
-    # If you're using Docker Desktop, the --add-host flag is optional. This flag makes sure that the host's internal IP gets exposed to the Prometheus container. 
     extra_hosts:
       - "host.docker.internal:host-gateway"
