@@ -4,11 +4,16 @@
 export DATA_PATH=${DATA_PATH:-/mnt/c/ai/data/genai/ragflow}
 
 echo "Creating directories in ${DATA_PATH}..."
-# Create necessary directories if they don't exist
+# Create necessary directories if they don't exist and set permissions
 for dir in ragflow-logs esdata infinity_data mysql_data minio_data redis_data; do
     mkdir -p "${DATA_PATH}/${dir}"
-    echo "✓ Created ${DATA_PATH}/${dir}"
+    chmod -R 777 "${DATA_PATH}/${dir}"
+    echo "✓ Created and set permissions for ${DATA_PATH}/${dir}"
 done
+
+# Set permissions for the parent directory as well
+chmod 777 "${DATA_PATH}"
+echo "✓ Set permissions for ${DATA_PATH}"
 
 echo "Starting RAGFlow services..."
 # Start the containers with project name "ragflow"

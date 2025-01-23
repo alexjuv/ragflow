@@ -193,7 +193,8 @@ def chat(dialog, messages, stream=True, **kwargs):
     bind_llm_ts = timer()
 
     prompt_config = dialog.prompt_config
-    field_map = KnowledgebaseService.get_field_map(dialog.kb_ids)
+    # field_map = KnowledgebaseService.get_field_map(dialog.kb_ids)
+    field_map = False # disable this function for the time being
     tts_mdl = None
     if prompt_config.get("tts"):
         tts_mdl = LLMBundle(dialog.tenant_id, LLMType.TTS)
