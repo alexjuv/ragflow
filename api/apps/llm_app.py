@@ -255,7 +255,7 @@ def add_llm():
         )
         try:
             img_url = (
-                "https://www.8848seo.cn/zb_users/upload/2022/07/20220705101240_99378.jpg"
+                "https://mbfs-jinrongtong-prod.mercedes-benz-finance.com.cn/desktop/assets/MB-star_64_n_web-be21c335.png"
             )
             res = requests.get(img_url)
             if res.status_code == 200:
