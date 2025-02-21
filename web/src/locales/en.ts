@@ -15,6 +15,7 @@ export default {
       edit: 'Edit',
       upload: 'Upload',
       english: 'English',
+      portugueseBr: 'Portuguese (Brazil)',
       chinese: 'Simplified Chinese',
       traditionalChinese: 'Traditional Chinese',
       language: 'Language',
@@ -22,7 +23,7 @@ export default {
       languagePlaceholder: 'select your language',
       copy: 'Copy',
       copied: 'Copied',
-      comingSoon: 'Coming Soon',
+      comingSoon: 'Coming soon',
       download: 'Download',
       close: 'Close',
       preview: 'Preview',
@@ -33,7 +34,9 @@ export default {
       pleaseSelect: 'Please select',
       pleaseInput: 'Please input',
       submit: 'Submit',
-      embedIntoSite: 'Embed Into Site',
+      embedIntoSite: 'Embed into webpage',
+      previousPage: 'Previous',
+      nextPage: 'Next',
     },
     login: {
       login: 'Sign in',
@@ -83,6 +86,7 @@ export default {
       testing: 'Retrieval testing',
       files: 'files',
       configuration: 'Configuration',
+      knowledgeGraph: 'Knowledge graph',
       name: 'Name',
       namePlaceholder: 'Please input name!',
       doc: 'Docs',
@@ -114,12 +118,12 @@ export default {
       testText: 'Test text',
       testTextPlaceholder: 'Input your question here!',
       testingLabel: 'Testing',
-      similarity: 'Hybrid Similarity',
-      termSimilarity: 'Term Similarity',
-      vectorSimilarity: 'Vector Similarity',
+      similarity: 'Hybrid similarity',
+      termSimilarity: 'Term similarity',
+      vectorSimilarity: 'Vector similarity',
       hits: 'Hits',
       view: 'View',
-      filesSelected: 'Files Selected',
+      filesSelected: 'Files selected',
       upload: 'Upload',
       run: 'Parse',
       runningStatus0: 'UNParsed',
@@ -134,7 +138,7 @@ export default {
       fromMessage: 'Missing start page number',
       toPlaceholder: 'to',
       toMessage: 'Missing end page number (excluded)',
-      layoutRecognize: 'Layout recognition',
+      layoutRecognize: 'Layout recognition & OCR',
       layoutRecognizeTip:
         'Use visual models for layout analysis to better understand the structure of the document and effectively locate document titles, text blocks, images, and tables. If disabled, only the plain text in the PDF will be retrieved.',
       taskPageSize: 'Task page size',
@@ -154,10 +158,10 @@ export default {
       cancel: 'Cancel',
       rerankModel: 'Rerank model',
       rerankPlaceholder: 'Please select',
-      rerankTip: `If left empty, RAGFlow will use a combination of weighted keyword similarity and weighted vector cosine similarity; if a rerank model is selected, a weighted reranking score will replace the weighted vector cosine similarity.`,
+      rerankTip: `If left empty, RAGFlow will use a combination of weighted keyword similarity and weighted vector cosine similarity; if a rerank model is selected, a weighted reranking score will replace the weighted vector cosine similarity. Please be aware that using a rerank model will significantly increase the system's response time.`,
       topK: 'Top-K',
       topKTip: `K chunks will be fed into rerank models.`,
-      delimiter: `Delimiter`,
+      delimiter: `Delimiters`,
       delimiterTip:
         'A delimiter or separator can consist of one or multiple special characters. If it is multiple characters, ensure they are enclosed in backticks( ``). For example, if you configure your delimiters like this: \n`##`;, then your texts will be separated at line breaks, double hash symbols (##), or semicolons.',
       html4excel: 'Excel to HTML',
@@ -167,6 +171,30 @@ export default {
       autoQuestions: 'Auto-question',
       autoQuestionsTip: `Automatically extract N questions for each chunk to increase their ranking for queries containing those questions. You can check or update the added questions for a chunk from the chunk list. This feature will not disrupt the chunking process if an error occurs, except that it may add an empty result to the original chunk. Be aware that extra tokens will be consumed by the LLM specified in 'System model settings'.`,
       redo: 'Do you want to clear the existing {{chunkNum}} chunks?',
+      setMetaData: 'Set Meta Data',
+      pleaseInputJson: 'Please enter JSON',
+      documentMetaTips: `<p>The meta data is in Json format(it's not searchable). It will be added into prompt for LLM if any chunks of this document are included in the prompt.</p>
+<p>Examples:</p>
+<b>The meta data is:</b><br>
+<code>
+  {
+      "Author": "Alex Dowson",
+      "Date": "2024-11-12"
+  }
+</code><br>
+<b>The prompt will be:</b><br>
+<p>Document: the_name_of_document</p>
+<p>Author: Alex Dowson</p>
+<p>Date: 2024-11-12</p>
+<p>Relevant fragments as following:</p>
+<ul>
+<li>  Here is the chunk content....</li>
+<li>  Here is the chunk content....</li>
+</ul>
+`,
+      metaData: 'Meta data',
+      deleteDocumentConfirmContent:
+        'The document is associated with the knowledge graph. After deletion, the related node and relationship information will be deleted, but the graph will not be updated immediately. The update graph action is performed during the process of parsing the new document that carries the knowledge graph extraction task.',
     },
     knowledgeConfiguration: {
       titleDescription:
@@ -174,7 +202,7 @@ export default {
       name: 'Knowledge base name',
       photo: 'Knowledge base photo',
       description: 'Description',
-      language: 'Language',
+      language: 'Document language',
       languageMessage: 'Please input your language!',
       languagePlaceholder: 'Please input your language!',
       permissions: 'Permissions',
@@ -192,6 +220,7 @@ export default {
       upload: 'Upload',
       english: 'English',
       chinese: 'Chinese',
+      portugueseBr: 'Portuguese (Brazil)',
       embeddingModelPlaceholder: 'Please select a embedding model',
       chunkMethodPlaceholder: 'Please select a chunk method',
       save: 'Save',
@@ -284,6 +313,16 @@ export default {
 <p>This approach chunks files using the 'naive'/'General' method. It splits a document into segments and then combines adjacent segments until the token count exceeds the threshold specified by 'Chunk token number', at which point a chunk is created.</p>
 <p>The chunks are then fed to the LLM to extract entities and relationships for a knowledge graph and a mind map.</p>
 <p>Ensure that you set the <b>Entity types</b>.</p>`,
+      tag: `<p>Knowlege base using 'Tag' as a chunking method is supposed to be used by other knowledge bases to add tags to their chunks, queries to which will also be with tags too.</p>
+<p>Knowlege base using 'Tag' as a chunking method is <b>NOT</b> supposed to be involved in RAG procedure.</p>
+<p>The chunks in this knowledge base are examples of tags, which demonstrate the entire tag set and the relevance between chunk and tags.</p>
+
+<p>This chunk method supports <b>EXCEL</b> and <b>CSV/TXT</b> file formats.</p>
+<p>If a file is in <b>Excel</b> format, it should contain two columns without headers: one for content and the other for tags, with the content column preceding the tags column. Multiple sheets are acceptable, provided the columns are properly structured.</p>
+<p>If a file is in <b>CSV/TXT</b> format, it must be UTF-8 encoded with TAB as the delimiter to separate content and tags.</p>
+<p>In tags column, there're English <b>comma</b> between tags.</p>
+<i>Lines of texts that fail to follow the above rules will be ignored, and each  pair will be considered a distinct chunk.</i>
+`,
       useRaptor: 'Use RAPTOR to enhance retrieval',
       useRaptorTip:
         'Recursive Abstractive Processing for Tree-Organized Retrieval, see https://huggingface.co/papers/2401.18059 for more information.',
@@ -305,17 +344,48 @@ The above is the content you need to summarize.`,
       randomSeed: 'Random seed',
       randomSeedMessage: 'Random seed is required',
       entityTypes: 'Entity types',
-      vietnamese: 'Vietamese',
+      vietnamese: 'Vietnamese',
       pageRank: 'Page rank',
       pageRankTip: `This increases the relevance score of the knowledge base. Its value will be added to the relevance score of all retrieved chunks from this knowledge base. Useful when you are searching within multiple knowledge bases and wanting to assign a higher pagerank score to a specific one.`,
+      tagName: 'Tag',
+      frequency: 'Frequency',
+      searchTags: 'Search tags',
+      tagCloud: 'Cloud',
+      tagTable: 'Table',
+      tagSet: 'Tag set',
+      tagSetTip: `
+     <p> Selecting the 'Tag' knowledge bases helps to tag every chunks. </p>
+<p>Query to those chunks will also be with tags too.</p>
+This procedure will improve precision of retrieval by adding more information to the dataset, especially when there's a large set of chunks.
+<p>Difference between tags and keywords:</p>
+<ul>
+  <li>Tag is a close set which is defined and manipulated by user while keyword is an open set.</li>
+  <li>You need to upload tag sets with samples prior to use.</li>
+  <li>Keywords are generated by LLM which is expensive and time consuming.</li>
+</ul>
+      `,
+      topnTags: 'Top-N Tags',
+      tags: 'Tags',
+      addTag: 'Add tag',
+      useGraphRag: 'Extract knowledge graph',
+      useGraphRagTip:
+        'After files being chunked, all the chunks will be used for knowlege graph generation which helps inference of multi-hop and complex problems a lot.',
+      graphRagMethod: 'Method',
+      graphRagMethodTip: `Light: the entity and relation extraction prompt is from GitHub - HKUDS/LightRAG: "LightRAG: Simple and Fast Retrieval-Augmented Generation"</br>
+        General: the entity and relation extraction prompt is from GitHub - microsoft/graphrag: A modular graph-based Retrieval-Augmented Generation (RAG) system`,
+      resolution: 'Entity resolution',
+      resolutionTip: `The resolution procedure would merge entities with the same meaning together which allows the graph conciser and more accurate. Entities as following should be merged:  President Trump, Donald Trump, Donald J. Trump, Donald John Trump`,
+      community: 'Community reports generation',
+      communityTip:
+        'Chunks are clustered into hierarchical communities with entities and relationships connecting each segment up through higher levels of abstraction. We then use an LLM to generate a summary of each community, known as a community report. More: https://www.microsoft.com/en-us/research/blog/graphrag-improving-global-search-via-dynamic-community-selection/',
     },
     chunk: {
       chunk: 'Chunk',
       bulk: 'Bulk',
       selectAll: 'Select All',
-      enabledSelected: 'Enable Selected',
-      disabledSelected: 'Disable Selected',
-      deleteSelected: 'Delete Selected',
+      enabledSelected: 'Enable selected',
+      disabledSelected: 'Disable selected',
+      deleteSelected: 'Delete selected',
       search: 'Search',
       all: 'All',
       enabled: 'Enabled',
@@ -350,7 +420,7 @@ The above is the content you need to summarize.`,
       language: 'Language',
       emptyResponse: 'Empty response',
       emptyResponseTip: `Set this as a response if no results are retrieved from the knowledge bases for your query, or leave this field blank to allow the LLM to improvise when nothing is found.`,
-      setAnOpener: 'Set an opener',
+      setAnOpener: 'Opening greeting',
       setAnOpenerInitial: `Hi! I'm your assistant, what can I do for you?`,
       setAnOpenerTip: 'Set an opening greeting for users.',
       knowledgeBases: 'Knowledge bases',
@@ -380,7 +450,7 @@ The above is the content you need to summarize.`,
       improvise: 'Improvise',
       precise: 'Precise',
       balance: 'Balance',
-      freedomTip: `Set the freedom level to 'Precise' to strictly confine the LLM's response to your selected knowledge base(s). Choose 'Improvise' to grant the LLM greater freedom in its responses, which may lead to hallucinations. 'Balance' is an intermediate level; choose 'Balance' for more balanced responses.`,
+      freedomTip: `A shortcut to 'Temperature', 'Top P', 'Presence penalty', and 'Frequency penalty' settings, indicating the freedom level of the model. This parameter has three options: Select 'Improvise' to produce more creative responses; select 'Precise' (default) to produce more conservative responses; 'Balance' is a middle ground between 'Improvise' and 'Precise'.`,
       temperature: 'Temperature',
       temperatureMessage: 'Temperature is required',
       temperatureTip: `This parameter controls the randomness of the model's predictions. A lower temperature results in more conservative responses, while a higher temperature yields more creative and diverse responses.`,
@@ -422,15 +492,16 @@ The above is the content you need to summarize.`,
       createNewKey: 'Create new key',
       created: 'Created',
       action: 'Action',
-      embedModalTitle: 'Embed into website',
-      comingSoon: 'Coming Soon',
+      embedModalTitle: 'Embed into webpage',
+      comingSoon: 'Coming soon',
       fullScreenTitle: 'Full Embed',
       fullScreenDescription:
         'Embed the following iframe into your website at the desired location',
       partialTitle: 'Partial Embed',
       extensionTitle: 'Chrome Extension',
-      tokenError: 'Please create API Token first!',
-      betaError: 'Please acquire a RAGFlow API key from the System Settings page first.',
+      tokenError: 'Please create API key first.',
+      betaError:
+        'Please acquire a RAGFlow API key from the System Settings page first.',
       searching: 'Searching...',
       parsing: 'Parsing',
       uploading: 'Uploading',
@@ -447,6 +518,11 @@ The above is the content you need to summarize.`,
         'This optimizes user queries using context in a multi-round conversation. When enabled, it will consume additional LLM tokens.',
       howUseId: 'How to use chat ID?',
       description: 'Description of assistant',
+      useKnowledgeGraph: 'Use knowledge graph',
+      useKnowledgeGraphTip:
+        'It will retrieve descriptions of relevant entities,relations and community reports, which will enhance inference of multi-hop and complex question.',
+      keyword: 'Keyword analysis',
+      keywordTip: `Apply LLM to analyze user's questions, extract keywords which will be emphesize during the relevance omputation.`,
     },
     setting: {
       profile: 'Profile',
@@ -566,8 +642,8 @@ The above is the content you need to summarize.`,
       SparkModelNameMessage: 'Please select Spark model',
       addSparkAPIPassword: 'Spark APIPassword',
       SparkAPIPasswordMessage: 'please input your APIPassword',
-      addSparkAPPID: 'Spark APPID',
-      SparkAPPIDMessage: 'please input your APPID',
+      addSparkAPPID: 'Spark APP ID',
+      SparkAPPIDMessage: 'please input your APP ID',
       addSparkAPISecret: 'Spark APISecret',
       SparkAPISecretMessage: 'please input your APISecret',
       addSparkAPIKey: 'Spark APIKey',
@@ -581,7 +657,7 @@ The above is the content you need to summarize.`,
         'Please give your speech synthesis model a name',
       addFishAudioAK: 'Fish Audio API KEY',
       addFishAudioAKMessage: 'Please input your API KEY',
-      addFishAudioRefID: 'FishAudio Refrence ID',
+      addFishAudioRefID: 'FishAudio Reference ID',
       addFishAudioRefIDMessage:
         'Please input the Reference ID (leave blank to use the default model).',
       GoogleModelIDMessage: 'Please input your model ID!',
@@ -676,7 +752,7 @@ The above is the content you need to summarize.`,
       msg: 'Messages',
       messagePlaceholder: 'message',
       messageMsg: 'Please input message or delete this field.',
-      addField: 'Add field',
+      addField: 'Add option',
       addMessage: 'Add message',
       loop: 'Loop',
       loopTip:
@@ -692,13 +768,13 @@ The above is the content you need to summarize.`,
       title: 'ID:',
       beginDescription: 'This is where the flow begins.',
       answerDescription: `A component that serves as the interface between human and bot, receiving user inputs and displaying the agent's responses.`,
-      retrievalDescription: `A component that retrieves information from a specified knowledge base and returns 'Empty response' if no information is found. Ensure the correct knowledge base is selected.`,
+      retrievalDescription: `A component that retrieves information from specified knowledge bases (datasets). Ensure that the knowledge bases you select use the same embedding model.`,
       generateDescription: `A component that prompts the LLM to generate responses. Ensure the prompt is set correctly.`,
       categorizeDescription: `A component that uses the LLM to classify user inputs into predefined categories. Ensure you specify the name, description, and examples for each category, along with the corresponding next component.`,
       relevantDescription: `A component that uses the LLM to assess whether the upstream output is relevant to the user's latest query. Ensure you specify the next component for each judge result.`,
-      rewriteQuestionDescription: `A component that refines a user query if it fails to retrieve relevant information from the knowledge base. It repeats this process until the predefined looping upper limit is reached. Ensure its upstream is 'Relevant' and downstream is 'Retrieval'. `,
+      rewriteQuestionDescription: `A component that rewrites a user query from the Interact component, based on the context of previous dialogues.`,
       messageDescription:
-        "A component that sends out a static message. If multiple messages are supplied, it randomly selects one to send. Ensure its downstream is 'Answer', the interface component.",
+        "A component that sends out a static message. If multiple messages are supplied, it randomly selects one to send. Ensure its downstream is 'Interact', the interface component.",
       keywordDescription: `A component that retrieves top N search results from user's input. Ensure the TopN value is set properly before use.`,
       switchDescription: `A component that evaluates conditions based on the output of previous components and directs the flow of execution accordingly. It allows for complex branching logic by defining cases and specifying actions for each case or default action if no conditions are met.`,
       wikipediaDescription: `A component that searches from wikipedia.org, using TopN to specify the number of search results. It supplements the existing knowledge bases.`,
@@ -723,7 +799,7 @@ The above is the content you need to summarize.`,
       nameRequiredMsg: 'Name is required',
       nameRepeatedMsg: 'The name cannot be repeated',
       keywordExtract: 'Keyword',
-      keywordExtractDescription: `A component that extracts keywords from a user query, with Top N specifing the number of keywords to extract.`,
+      keywordExtractDescription: `A component that extracts keywords from a user query, with Top N specifying the number of keywords to extract.`,
       baidu: 'Baidu',
       baiduDescription: `A component that searches from baidu.com, using TopN to specify the number of search results. It supplements the existing knowledge bases.`,
       duckDuckGo: 'DuckDuckGo',
@@ -778,7 +854,7 @@ The above is the content you need to summarize.`,
       baiduFanyi: 'BaiduFanyi',
       baiduFanyiDescription:
         'A component that gets specialized translations from https://fanyi.baidu.com/.',
-      appid: 'App id',
+      appid: 'App ID',
       secretKey: 'Secret key',
       domain: 'Domain',
       transType: 'Translation type',
@@ -901,22 +977,22 @@ The above is the content you need to summarize.`,
       switch: 'Switch',
       logicalOperator: 'Logical operator',
       switchOperatorOptions: {
-        equal: 'equal',
-        notEqual: 'notEqual',
+        equal: 'Equals',
+        notEqual: 'Not equal',
         gt: 'Greater than',
         ge: 'Greater equal',
         lt: 'Less than',
         le: 'Less equal',
         contains: 'Contains',
         notContains: 'Not contains',
-        startWith: 'Start with',
-        endWith: 'End with',
-        empty: 'Empty',
+        startWith: 'Starts with',
+        endWith: 'Ends with',
+        empty: 'Is empty',
         notEmpty: 'Not empty',
       },
       switchLogicOperatorOptions: {
-        and: 'And',
-        or: 'Or',
+        and: 'AND',
+        or: 'OR',
       },
       operator: 'Operator',
       value: 'Value',
@@ -1048,7 +1124,7 @@ The above is the content you need to summarize.`,
       testRun: 'Test Run',
       template: 'Template',
       templateDescription:
-        'A component that formats the output of another component.',
+        'A component that formats the output of other components.1. Supports Jinja2 templates, will first convert the input to an object and then render the template, 2. Simultaneously retains the original method of using {parameter} string replacement',
       emailComponent: 'Email',
       emailDescription: 'Send an email to a specified address.',
       smtpServer: 'SMTP Server',
@@ -1076,6 +1152,29 @@ The above is the content you need to summarize.`,
       contentTip: 'content: Email content (Optional)',
       jsonUploadTypeErrorMessage: 'Please upload json file',
       jsonUploadContentErrorMessage: 'json file error',
+      iteration: 'Iteration',
+      iterationDescription: `This component firstly split the input into array by "delimiter".
+Perform the same operation steps on the elements in the array in sequence until all results are output, which can be understood as a task batch processor.
+
+For example, within the long text translation iteration node, if all content is input to the LLM node, the single conversation limit may be reached. The upstream node can first split the long text into multiple fragments, and cooperate with the iterative node to perform batch translation on each fragment to avoid reaching the LLM message limit for a single conversation.`,
+      delimiterTip: `
+This delimiter is used to split the input text into several text pieces echo of which will be performed as input item of each iteration.`,
+      delimiterOptions: {
+        comma: 'Comma',
+        lineBreak: 'Line break',
+        tab: 'Tab',
+        underline: 'Underline',
+        diagonal: 'Forward slash',
+        minus: 'Dash',
+        semicolon: 'Semicolon',
+      },
+      addVariable: 'Add variable',
+      variableSettings: 'Variable settings',
+      globalVariables: 'Global variables',
+      systemPrompt: 'System prompt',
+      addCategory: 'Add category',
+      categoryName: 'Category name',
+      nextStep: 'Next step',
     },
     footer: {
       profile: 'All rights reserved @ React',
