@@ -29,6 +29,7 @@ import os
 import json
 import requests
 import asyncio
+import logging
 
 LENGTH_NOTIFICATION_CN = "······\n由于长度的原因，回答被截断了，要继续吗？"
 LENGTH_NOTIFICATION_EN = "...\nFor the content length reason, it stopped, continue?"
@@ -40,6 +41,8 @@ class Base(ABC):
         self.model_name = model_name
 
     def chat(self, system, history, gen_conf):
+        
+        logging.info(f"chat with {self.model_name}-{self.client}")
         if system:
             history.insert(0, {"role": "system", "content": system})
         try:
@@ -48,6 +51,7 @@ class Base(ABC):
                 messages=history,
                 **gen_conf)
             ans = response.choices[0].message.content.strip()
+            logging.info(response)
             if response.choices[0].finish_reason == "length":
                 if is_chinese(ans):
                     ans += LENGTH_NOTIFICATION_CN
@@ -55,6 +59,9 @@ class Base(ABC):
                     ans += LENGTH_NOTIFICATION_EN
             return ans, response.usage.total_tokens
         except openai.APIError as e:
+            return "**ERROR**: " + str(e), 0
+        except Exception as e:
+            logging.error(e)
             return "**ERROR**: " + str(e), 0
 
     def chat_streamly(self, system, history, gen_conf):

@@ -45,8 +45,10 @@ def factories():
         for f in fac:
             f["model_types"] = list(mdl_types.get(f["name"], [LLMType.CHAT, LLMType.EMBEDDING, LLMType.RERANK,
                                                               LLMType.IMAGE2TEXT, LLMType.SPEECH2TEXT, LLMType.TTS]))
+        logging.info("factories succeeded for user %s", current_user.id)
         return get_json_result(data=fac)
     except Exception as e:
+        logging.error("factories failed for user %s: %s", current_user.id, e)
         return server_error_response(e)
 
 
@@ -59,7 +61,12 @@ def set_api_key():
     chat_passed, embd_passed, rerank_passed = False, False, False
     factory = req["llm_factory"]
     msg = ""
+    
+    logging.info(f"set_api_key {req['api_key']} - {req.get('base_url')}  for user {current_user.id}")
+    
     for llm in LLMService.query(fid=factory):
+        logging.info(f"set_api_key {llm.llm_name} - {llm.model_type}")
+        
         if not embd_passed and llm.model_type == LLMType.EMBEDDING.value:
             mdl = EmbeddingModel[factory](
                 req["api_key"], llm.llm_name, base_url=req.get("base_url"))
@@ -99,6 +106,7 @@ def set_api_key():
             break
 
     if msg:
+        logging.error("set_api_key failed for user %s: %s", current_user.id, msg)
         return get_data_error_result(message=msg)
 
     llm_config = {
@@ -126,6 +134,7 @@ def set_api_key():
                 max_tokens=llm_config["max_tokens"]
             )
 
+    logging.info("set_api_key succeeded for user %s", current_user.id)
     return get_json_result(data=True)
 
 
@@ -133,7 +142,11 @@ def set_api_key():
 @login_required
 @validate_request("llm_factory")
 def add_llm():
+    
     req = request.json
+    
+    logging.info(f"add_llm {req['api_base']} - {req['api_key']} for user {current_user.id}")
+    
     factory = req["llm_factory"]
 
     def apikey_json(keys):
@@ -208,6 +221,8 @@ def add_llm():
         "max_tokens": req.get("max_tokens")
     }
 
+    logging.info(f"add_llm {req['api_base']} - {req['api_key']} for user {current_user.id}")
+    
     msg = ""
     if llm["model_type"] == LLMType.EMBEDDING.value:
         mdl = EmbeddingModel[factory](
@@ -280,6 +295,7 @@ def add_llm():
         pass
 
     if msg:
+        logging.error("add_llm failed for user %s: %s", current_user.id, msg)
         return get_data_error_result(message=msg)
 
     if not TenantLLMService.filter_update(
@@ -287,6 +303,7 @@ def add_llm():
              TenantLLM.llm_name == llm["llm_name"]], llm):
         TenantLLMService.save(**llm)
 
+    logging.info("add_llm succeeded for user %s", current_user.id)
     return get_json_result(data=True)
 
 
@@ -298,6 +315,7 @@ def delete_llm():
     TenantLLMService.filter_delete(
         [TenantLLM.tenant_id == current_user.id, TenantLLM.llm_factory == req["llm_factory"],
          TenantLLM.llm_name == req["llm_name"]])
+    logging.info("delete_llm succeeded for user %s, factory: %s, llm_name: %s", current_user.id, req["llm_factory"], req["llm_name"])
     return get_json_result(data=True)
 
 
@@ -308,6 +326,7 @@ def delete_factory():
     req = request.json
     TenantLLMService.filter_delete(
         [TenantLLM.tenant_id == current_user.id, TenantLLM.llm_factory == req["llm_factory"]])
+    logging.info("delete_factory succeeded for user %s, factory: %s", current_user.id, req["llm_factory"])
     return get_json_result(data=True)
 
 
@@ -327,8 +346,10 @@ def my_llms():
                 "name": o["llm_name"],
                 "used_token": o["used_tokens"]
             })
+        logging.info("my_llms retrieved for user %s", current_user.id)
         return get_json_result(data=res)
     except Exception as e:
+        logging.error("my_llms failed for user %s: %s", current_user.id, e)
         return server_error_response(e)
 
 
@@ -363,6 +384,8 @@ def list_app():
                 res[m["fid"]] = []
             res[m["fid"]].append(m)
 
+        logging.info("list_app succeeded for user %s", current_user.id)
         return get_json_result(data=res)
     except Exception as e:
+        logging.error("list_app failed for user %s: %s", current_user.id, e)
         return server_error_response(e)
